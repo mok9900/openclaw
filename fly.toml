@@ -5,16 +5,16 @@ primary_region = "nrt"
   gateway = "/entrypoint.sh gateway"
   worker = "/entrypoint.sh worker"
 
-# 송출기 머신 전용 마운트
+# 송출기 전용 500GB SSD
 [[mounts]]
   source = "gateway_data"
-  destination = "/data" # 내부 경로는 똑같아도 됨 (머신이 다르니까)
+  destination = "/data"
   processes = ["gateway"]
 
-# 본체 머신 전용 마운트
+# 본체 전용 500GB SSD
 [[mounts]]
   source = "worker_data"
-  destination = "/data" # 내부 경로는 똑같아도 됨
+  destination = "/data"
   processes = ["worker"]
 
 [[vm]]
@@ -24,4 +24,5 @@ primary_region = "nrt"
 
 [http_service]
   internal_port = 8443
+  force_https = true
   processes = ["gateway"]
