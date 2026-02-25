@@ -1,28 +1,23 @@
-app = "openclaw"
-primary_region = "nrt"
+# fly.toml app configuration file generated for openclaw on 2026-02-25T09:29:53Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-[processes]
-  gateway = "/entrypoint.sh gateway"
-  worker = "/entrypoint.sh worker"
+app = 'openclaw'
+primary_region = 'ams'
 
-# 송출기 전용 500GB SSD
-[[mounts]]
-  source = "gateway_data"
-  destination = "/data"
-  processes = ["gateway"]
-
-# 본체 전용 500GB SSD
-[[mounts]]
-  source = "worker_data"
-  destination = "/data"
-  processes = ["worker"]
-
-[[vm]]
-  cpu_kind = "performance"
-  cpus = 16
-  memory_mb = 131072
+[build]
 
 [http_service]
-  internal_port = 8443
+  internal_port = 8080
   force_https = true
-  processes = ["gateway"]
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 256
