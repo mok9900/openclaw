@@ -1,0 +1,21 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+# KasmVNC 및 오디오 송출 최적화 패키지
+RUN apt-get update && apt-get install -y \
+    sudo wget curl kasmvncserver pulseaudio \
+    dbus-x11 x11-xserver-utils \
+    && apt-get clean
+
+RUN useradd -m -s /bin/bash flyuser && echo "flyuser:flypass" | chpasswd && adduser flyuser sudo
+RUN echo "flyuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# KasmVNC 설정 (16스레드 인코딩 강제)
+COPY kasmvnc.yaml /home/flyuser/.kasvnc/kasmvnc.yaml
+RUN chown -R flyuser:flyuser /home/flyuser/.kasvnc
+
+COPY gateway_entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 8443
+ENTRYPOINT ["/entrypoint.sh"]
