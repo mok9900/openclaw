@@ -1,21 +1,22 @@
 app = "openclaw"
 primary_region = "nrt"
 
-[build]
-  dockerfile = "Dockerfile"
+[processes]
+  gateway = "/entrypoint.sh gateway" # 송출 담당
+  worker = "/entrypoint.sh worker"   # 찐 본체
 
 [http_service]
-  internal_port = 8443 # KasmVNC 기본 포트
+  internal_port = 8443
   force_https = true
-  auto_stop_machines = false
-  auto_start_machines = true
-  min_machines_running = 1
+  processes = ["gateway"] # 외부 인터넷은 gateway 머신으로만 연결
 
 [[mounts]]
   source = "openclaw_data"
-  destination = "/mnt/data" # 500GB SSD 마운트 지점
+  destination = "/mnt/data"
+  processes = ["worker"] # 500GB SSD는 본체에만 마운트
 
-[[vm]]
+[vm]
+  # 이 설정은 기본값이며, 배포 후 fly machine run으로 그룹별 스펙 조정 필요
   cpu_kind = "performance"
   cpus = 16
   memory_mb = 131072
