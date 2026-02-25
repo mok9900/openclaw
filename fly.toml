@@ -5,17 +5,23 @@ primary_region = "nrt"
   gateway = "/entrypoint.sh gateway"
   worker = "/entrypoint.sh worker"
 
+# 송출기 머신 전용 마운트
 [[mounts]]
-  source = "openclaw_data"
-  destination = "/mnt/data"
+  source = "gateway_data"
+  destination = "/data" # 내부 경로는 똑같아도 됨 (머신이 다르니까)
+  processes = ["gateway"]
+
+# 본체 머신 전용 마운트
+[[mounts]]
+  source = "worker_data"
+  destination = "/data" # 내부 경로는 똑같아도 됨
   processes = ["worker"]
 
-[vm]
+[[vm]]
   cpu_kind = "performance"
   cpus = 16
   memory_mb = 131072
 
 [http_service]
   internal_port = 8443
-  force_https = true
   processes = ["gateway"]
